@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, 'Главная')}">
+<body>
+<div th:fragment="content">
+    <section class="hero">
+        <h1>Открой мир знаний</h1>
+        <p>VioletBloom — уютная платформа с курсами, тестами и практикой. Учись в своём ритме и следи за прогрессом.</p>
+        <a th:href="@{/courses}" class="btn btn-primary">Смотреть курсы</a>
+        <a th:href="@{/register}" class="btn btn-white" style="margin-left:0.5rem">Создать аккаунт</a>
+    </section>
+
+    <section class="courses-section">
+        <div class="courses-section-inner">
+            <h2 class="section-title section-title-center">Наши курсы</h2>
+            <div class="card-grid-centered">
+                <div class="card" th:each="course : ${courses.content}">
+                    <span class="badge badge-published">Доступен</span>
+                    <h3 th:text="${course.title}">Курс</h3>
+                    <p class="meta" th:text="${#strings.abbreviate(course.description, 120)}">Описание</p>
+                    <div class="flex-between">
+                        <span class="teacher-name" th:text="'✦ ' + ${course.teacherName}">Преподаватель</span>
+                        <span class="text-muted" th:text="${course.lessonCount} + ' уроков'">Уроки</span>
+                    </div>
+                    <a th:href="@{/courses/{id}(id=${course.id})}" class="btn btn-primary btn-sm mt-2">Подробнее</a>
+                </div>
+            </div>
+            <div th:if="${courses.empty}" class="alert alert-info" style="max-width:480px;margin:2rem auto 0">
+                Скоро здесь появятся новые курсы — загляните позже!
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

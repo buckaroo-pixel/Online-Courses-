@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, 'Статистика')}">
+<body>
+<div th:fragment="content">
+    <div class="container">
+        <h1 class="section-title">Статистика</h1>
+
+        <h2 class="section-title">Популярность курсов</h2>
+        <table class="table content-box">
+            <thead><tr><th>Курс</th><th>Кол-во записей</th></tr></thead>
+            <tbody>
+            <tr th:each="c : ${popularCourses}">
+                <td th:text="${c.courseTitle}">Курс</td>
+                <td th:text="${c.enrollmentCount}">0</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2 class="section-title mt-2">Успеваемость студентов</h2>
+        <form method="get" class="mb-2">
+            <select name="courseId" class="form-control" style="max-width:400px;display:inline-block">
+                <option value="">Выберите курс</option>
+                <option th:each="c : ${myCourses.content}" th:value="${c.id}" th:text="${c.title}"
+                        th:selected="${selectedCourseId != null and selectedCourseId == c.id}"></option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">Показать</button>
+        </form>
+
+        <table class="table content-box" th:if="${studentStats != null}">
+            <thead><tr><th>Студент</th><th>Средний прогресс</th><th>Сумма баллов</th></tr></thead>
+            <tbody>
+            <tr th:each="row : ${studentStats}">
+                <td th:text="${row[1] + ' ' + row[2]}">Студент</td>
+                <td th:text="${#numbers.formatDecimal(row[3], 1, 1)} + '%'">0%</td>
+                <td th:text="${row[4]}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

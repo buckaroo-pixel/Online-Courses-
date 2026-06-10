@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: online-courses
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/courses_db
+    username: courses_user
+    password: courses_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 30m
+
+app:
+  base-url: http://localhost:8080
+  password-reset-token-expiry-hours: 24
+
+logging:
+  level:
+    org.hibernate.SQL: WARN
+    com.courses: INFO

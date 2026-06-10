@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: layout(~{::content}, 'Личный кабинет')}">
+<body>
+<div th:fragment="content">
+    <div class="container">
+        <h1 class="section-title" th:text="'Привет, ' + ${user.fullName} + '!'">Привет!</h1>
+
+        <div sec:authorize="hasRole('STUDENT')">
+            <div class="stats-grid" th:if="${stats}">
+                <div class="stat-card">
+                    <div class="value" th:text="${stats.enrolledCourses}">0</div>
+                    <div class="label">Мои курсы</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" th:text="${stats.completedLessons}">0</div>
+                    <div class="label">Пройдено уроков</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" th:text="${stats.totalScore}">0</div>
+                    <div class="label">Всего баллов</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" th:text="${#numbers.formatDecimal(stats.averageProgress, 0, 0)} + '%'">0%</div>
+                    <div class="label">Средний прогресс</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Мои курсы</h2>
+            <div class="card-grid" th:if="${enrollments != null and !enrollments.empty}">
+                <div class="card" th:each="e : ${enrollments}">
+                    <h3 th:text="${e.course.title}">Курс</h3>
+                    <p class="meta" th:text="${#strings.abbreviate(e.course.description, 100)}">Описание</p>
+                    <div class="progress-bar">
+                        <div class="fill" th:style="'width:' + ${e.progressPercent} + '%'"></div>
+                    </div>
+                    <p class="text-muted" th:text="'Прогресс: ' + ${e.progressPercent} + '% · Баллы: ' + ${e.totalScore}">Прогресс</p>
+                    <a th:href="@{/courses/{id}(id=${e.course.id})}" class="btn btn-primary btn-sm">Продолжить</a>
+                </div>
+            </div>
+            <div th:if="${enrollments == null or enrollments.empty}" class="alert alert-info">
+                Вы ещё не записаны ни на один курс. <a th:href="@{/courses}">Посмотреть каталог</a>
+            </div>
+        </div>
+
+        <div sec:authorize="hasAnyRole('TEACHER','ADMIN')">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="value" th:text="${pendingCount}">0</div>
+                    <div class="label">Работ на проверке</div>
+                </div>
+            </div>
+            <h2 class="section-title">Популярные курсы</h2>
+            <table class="table content-box" th:if="${popularCourses != null and !popularCourses.empty}">
+                <thead><tr><th>Курс</th><th>Записей</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${popularCourses}">
+                    <td th:text="${c.courseTitle}">Курс</td>
+                    <td th:text="${c.enrollmentCount}">0</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="mt-2">
+                <a th:href="@{/teacher/courses}" class="btn btn-primary">Управление курсами</a>
+                <a th:href="@{/teacher/submissions}" class="btn btn-primary" style="margin-left:0.5rem">Проверить работы</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

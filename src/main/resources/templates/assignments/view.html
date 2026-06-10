@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ${assignment.title})}">
+<body>
+<div th:fragment="content">
+    <div class="container">
+        <div class="content-box">
+            <h1 th:text="${assignment.title}">Задание</h1>
+            <p class="text-muted mt-1" th:text="${assignment.description}"></p>
+            <p class="text-muted" th:text="'Макс. балл: ' + ${assignment.maxScore}"></p>
+
+            <div th:if="${assignment.lastScore != null}" class="alert alert-success mt-2">
+                Ваш результат: <b th:text="${assignment.lastScore} + '/' + ${assignment.maxScore}"></b>
+                <span th:if="${assignment.lastSubmissionStatus.name() == 'PENDING'}"> (на проверке)</span>
+            </div>
+
+            <div th:if="${assignment.type.name() == 'QUIZ'}" class="mt-2">
+                <form th:action="@{/assignments/{id}/quiz(id=${assignment.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="question-block" th:each="q, stat : ${assignment.questions}">
+                        <p><b th:text="${stat.count} + '. ' + ${q.text}">Вопрос</b></p>
+                        <label th:each="opt : ${q.options}">
+                            <input type="radio" th:name="'question_' + ${q.id}" th:value="${opt.id}" required>
+                            <span th:text="${opt.text}">Вариант</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Отправить тест</button>
+                </form>
+            </div>
+
+            <div th:if="${assignment.type.name() == 'PRACTICAL'}" class="mt-2">
+                <form th:action="@{/assignments/{id}/practical(id=${assignment.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="form-group">
+                        <label>Ваш ответ</label>
+                        <textarea name="answerText" class="form-control" rows="8" required
+                                  placeholder="Опишите выполненную работу..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Отправить на проверку</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

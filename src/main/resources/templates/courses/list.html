@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, 'Каталог курсов')}">
+<body>
+<div th:fragment="content">
+    <section class="courses-section" style="min-height:70vh">
+        <div class="courses-section-inner">
+            <h1 class="section-title section-title-center">Каталог курсов</h1>
+            <p class="text-muted mb-2" style="max-width:520px;margin:0 auto 2rem">
+                Выберите направление и начните обучение — каждый курс ведёт опытный преподаватель.
+            </p>
+            <div class="card-grid-centered">
+                <div class="card" th:each="course : ${courses.content}">
+                    <span class="badge badge-published">Доступен</span>
+                    <h3 th:text="${course.title}">Курс</h3>
+                    <p class="meta" th:text="${#strings.abbreviate(course.description, 150)}">Описание</p>
+                    <p class="teacher-name" th:text="'✦ ' + ${course.teacherName}"></p>
+                    <p class="text-muted mt-1" th:text="${course.lessonCount} + ' уроков'"></p>
+                    <a th:href="@{/courses/{id}(id=${course.id})}" class="btn btn-primary btn-sm mt-2">Подробнее</a>
+                </div>
+            </div>
+            <div th:if="${courses.empty}" class="alert alert-info" style="max-width:480px;margin:2rem auto 0">
+                Курсы пока не добавлены.
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/courses_db
+    username: courses_user
+    password: courses_pass
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true

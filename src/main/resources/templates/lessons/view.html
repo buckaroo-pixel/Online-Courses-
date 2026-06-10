@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, ${lesson.title})}">
+<body>
+<div th:fragment="content">
+    <div class="container">
+        <a th:href="@{/courses/{id}(id=${lesson.courseId})}" class="text-muted">← Назад к курсу</a>
+        <div class="content-box mt-2">
+            <div class="flex-between">
+                <h1 th:text="${lesson.title}">Урок</h1>
+                <span class="badge badge-type" th:text="${lesson.type}">TEXT</span>
+            </div>
+            <p class="text-muted mt-1" th:if="${lesson.durationMinutes}" th:text="'⏱ ' + ${lesson.durationMinutes} + ' мин.'"></p>
+
+            <div th:if="${lesson.type.name() == 'TEXT'}" class="mt-2" th:utext="${#strings.replace(#strings.escapeXml(lesson.content), '&#10;', '<br/>')}">Контент</div>
+
+            <div th:if="${lesson.type.name() == 'VIDEO'}" class="video-container mt-2">
+                <iframe th:src="${lesson.mediaUrl}" allowfullscreen></iframe>
+            </div>
+
+            <div th:if="${lesson.type.name() == 'AUDIO'}" class="mt-2">
+                <audio th:src="${lesson.mediaUrl}" controls style="width:100%"></audio>
+                <p th:text="${lesson.content}" class="mt-1"></p>
+            </div>
+
+            <div th:if="${lesson.type.name() == 'PRESENTATION'}" class="mt-2">
+                <p th:text="${lesson.content}"></p>
+                <a th:if="${lesson.mediaUrl}" th:href="${lesson.mediaUrl}" target="_blank" class="btn btn-primary btn-sm">Открыть презентацию</a>
+            </div>
+
+            <form th:action="@{/lessons/{id}/complete(id=${lesson.id})}" method="post" class="mt-2">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn btn-success" th:disabled="${lesson.completed}">
+                    <span th:text="${lesson.completed} ? 'Урок пройден ✓' : 'Отметить как пройденный'">Пройти</span>
+                </button>
+            </form>
+        </div>
+
+        <h2 class="section-title" th:if="${assignments != null and !assignments.empty}">Задания</h2>
+        <div class="card-grid" th:if="${assignments != null}">
+            <div class="card" th:each="a : ${assignments}">
+                <span class="badge badge-type" th:text="${a.type}">QUIZ</span>
+                <h3 th:text="${a.title}">Задание</h3>
+                <p class="meta" th:text="${a.description}"></p>
+                <p th:if="${a.lastScore != null}" class="text-muted" th:text="'Результат: ' + ${a.lastScore} + '/' + ${a.maxScore}"></p>
+                <a th:href="@{/assignments/{id}(id=${a.id})}" class="btn btn-primary btn-sm">Выполнить</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

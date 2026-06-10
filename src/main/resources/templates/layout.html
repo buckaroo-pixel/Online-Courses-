@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout(content, pageTitle)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle + ' — VioletBloom' : 'VioletBloom'}">VioletBloom</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+    <a th:href="@{/}" class="logo">🌸 VioletBloom <span>академия знаний</span></a>
+    <div class="nav-links">
+        <a th:href="@{/courses}">Курсы</a>
+        <a th:href="@{/dashboard}" sec:authorize="isAuthenticated()">Личный кабинет</a>
+        <a th:href="@{/teacher/courses}" sec:authorize="hasAnyRole('TEACHER','ADMIN')">Мои курсы</a>
+        <a th:href="@{/teacher/submissions}" sec:authorize="hasAnyRole('TEACHER','ADMIN')">Проверка работ</a>
+        <a th:href="@{/teacher/statistics}" sec:authorize="hasAnyRole('TEACHER','ADMIN')">Статистика</a>
+        <a th:href="@{/login}" sec:authorize="!isAuthenticated()">Вход</a>
+        <a th:href="@{/register}" sec:authorize="!isAuthenticated()">Регистрация</a>
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-sm btn-outline">Выход</button>
+        </form>
+    </div>
+</nav>
+
+<div th:if="${message}" class="container" style="padding-bottom:0">
+    <div class="alert alert-success" th:text="${message}"></div>
+</div>
+<div th:if="${error}" class="container" style="padding-bottom:0">
+    <div class="alert alert-error" th:text="${error}"></div>
+</div>
+
+<main th:replace="${content}">Content</main>
+
+<footer class="footer">&copy; 2026 VioletBloom — учись с удовольствием, расти с каждым уроком</footer>
+</body>
+</html>
