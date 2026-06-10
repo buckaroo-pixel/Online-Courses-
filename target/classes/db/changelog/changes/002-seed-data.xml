@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Пароль для всех демо-аккаунтов: password -->
+    <changeSet id="seed-users" author="courses">
+        <insert tableName="users">
+            <column name="id" valueNumeric="1"/>
+            <column name="email" value="admin@courses.ru"/>
+            <column name="password" value="$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW"/>
+            <column name="first_name" value="София"/>
+            <column name="last_name" value="Алексеева"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" valueNumeric="2"/>
+            <column name="email" value="teacher@courses.ru"/>
+            <column name="password" value="$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW"/>
+            <column name="first_name" value="Елена"/>
+            <column name="last_name" value="Морозова"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" valueNumeric="3"/>
+            <column name="email" value="student@courses.ru"/>
+            <column name="password" value="$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW"/>
+            <column name="first_name" value="Анна"/>
+            <column name="last_name" value="Сидорова"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="role" value="ADMIN"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="role" value="TEACHER"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueNumeric="2"/>
+            <column name="role" value="TEACHER"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueNumeric="3"/>
+            <column name="role" value="STUDENT"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="seed-demo-course" author="courses">
+        <insert tableName="courses">
+            <column name="id" valueNumeric="1"/>
+            <column name="title" value="Профессиональная Java-разработка"/>
+            <column name="description" value="Пошаговый курс для тех, кто хочет уверенно писать на Java и создавать современные приложения на Spring Boot. Теория, практика и реальные задачи — всё в одном месте."/>
+            <column name="teacher_id" valueNumeric="2"/>
+            <column name="published" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="sections">
+            <column name="id" valueNumeric="1"/>
+            <column name="course_id" valueNumeric="1"/>
+            <column name="title" value="Знакомство с Java"/>
+            <column name="order_index" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="sections">
+            <column name="id" valueNumeric="2"/>
+            <column name="course_id" valueNumeric="1"/>
+            <column name="title" value="Spring Boot на практике"/>
+            <column name="order_index" valueNumeric="2"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="lessons">
+            <column name="id" valueNumeric="1"/>
+            <column name="section_id" valueNumeric="1"/>
+            <column name="title" value="Почему Java — отличный выбор?"/>
+            <column name="content" value="Java — зрелый и востребованный язык с сильной экосистемой. Он используется в банках, стартапах и крупных IT-компаниях. На этом курсе вы шаг за шагом освоите фундамент, который пригодится в любой backend-разработке."/>
+            <column name="type" value="TEXT"/>
+            <column name="order_index" valueNumeric="1"/>
+            <column name="duration_minutes" valueNumeric="15"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="lessons">
+            <column name="id" valueNumeric="2"/>
+            <column name="section_id" valueNumeric="1"/>
+            <column name="title" value="Настройка рабочего окружения"/>
+            <column name="content" value="Разберём установку JDK, выбор IDE и настройку проекта так, чтобы можно было сразу приступить к практике без лишней рутины."/>
+            <column name="type" value="VIDEO"/>
+            <column name="media_url" value="https://www.youtube.com/embed/mGkZ72V0Blg"/>
+            <column name="order_index" valueNumeric="2"/>
+            <column name="duration_minutes" valueNumeric="20"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="lessons">
+            <column name="id" valueNumeric="3"/>
+            <column name="section_id" valueNumeric="2"/>
+            <column name="title" value="Первое приложение на Spring Boot"/>
+            <column name="content" value="Spring Boot берёт на себя рутину: автоконфигурацию, встроенный сервер и готовые стартеры. В этом уроке вы создадите свой первый проект и поймёте, из чего состоит типичное веб-приложение."/>
+            <column name="type" value="TEXT"/>
+            <column name="order_index" valueNumeric="1"/>
+            <column name="duration_minutes" valueNumeric="25"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="assignments">
+            <column name="id" valueNumeric="1"/>
+            <column name="lesson_id" valueNumeric="1"/>
+            <column name="title" value="Мини-тест: основы Java"/>
+            <column name="description" value="Небольшая проверка, чтобы закрепить базовые понятия после первого урока"/>
+            <column name="type" value="QUIZ"/>
+            <column name="max_score" valueNumeric="100"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="assignments">
+            <column name="id" valueNumeric="2"/>
+            <column name="lesson_id" valueNumeric="3"/>
+            <column name="title" value="Практикум: первый REST-сервис"/>
+            <column name="description" value="Создайте простой Spring Boot проект с REST-контроллером и опишите, как вы его запускали"/>
+            <column name="type" value="PRACTICAL"/>
+            <column name="max_score" valueNumeric="100"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="questions">
+            <column name="id" valueNumeric="1"/>
+            <column name="assignment_id" valueNumeric="1"/>
+            <column name="text" value="Какой тип данных используется для целых чисел в Java?"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="questions">
+            <column name="id" valueNumeric="2"/>
+            <column name="assignment_id" valueNumeric="1"/>
+            <column name="text" value="Какой модификатор доступа делает поле доступным только внутри класса?"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="answer_options">
+            <column name="id" valueNumeric="1"/>
+            <column name="question_id" valueNumeric="1"/>
+            <column name="text" value="int"/>
+            <column name="correct" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="answer_options">
+            <column name="id" valueNumeric="2"/>
+            <column name="question_id" valueNumeric="1"/>
+            <column name="text" value="String"/>
+            <column name="correct" valueBoolean="false"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="answer_options">
+            <column name="id" valueNumeric="3"/>
+            <column name="question_id" valueNumeric="1"/>
+            <column name="text" value="boolean"/>
+            <column name="correct" valueBoolean="false"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="answer_options">
+            <column name="id" valueNumeric="4"/>
+            <column name="question_id" valueNumeric="2"/>
+            <column name="text" value="private"/>
+            <column name="correct" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="answer_options">
+            <column name="id" valueNumeric="5"/>
+            <column name="question_id" valueNumeric="2"/>
+            <column name="text" value="public"/>
+            <column name="correct" valueBoolean="false"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+        <insert tableName="answer_options">
+            <column name="id" valueNumeric="6"/>
+            <column name="question_id" valueNumeric="2"/>
+            <column name="text" value="protected"/>
+            <column name="correct" valueBoolean="false"/>
+            <column name="created_at" valueDate="2026-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2026-01-01T00:00:00"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

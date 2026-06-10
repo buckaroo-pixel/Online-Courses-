@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: layout(~{::content}, ${course.title})}">
+<body>
+<div th:fragment="content">
+    <div class="container">
+        <div class="content-box mb-2">
+            <div class="flex-between">
+                <div>
+                    <h1 th:text="${course.title}">Курс</h1>
+                    <p class="mt-1">Преподаватель: <span class="teacher-name" th:text="${course.teacherName}"></span></p>
+                </div>
+                <span class="badge badge-published" th:if="${course.published}">Доступен</span>
+            </div>
+            <p class="mt-2" th:text="${course.description}">Описание</p>
+
+            <div th:if="${course.progressPercent > 0}" class="mt-2">
+                <p><b>Ваш прогресс:</b> <span th:text="${course.progressPercent} + '%'"></span></p>
+                <div class="progress-bar"><div class="fill" th:style="'width:' + ${course.progressPercent} + '%'"></div></div>
+            </div>
+
+            <div sec:authorize="hasRole('STUDENT')" class="mt-2">
+                <form th:if="${enrolled == null or !enrolled}" th:action="@{/courses/{id}/enroll(id=${course.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-success">Записаться на курс</button>
+                </form>
+                <span th:if="${enrolled}" class="badge badge-published">Вы записаны</span>
+            </div>
+        </div>
+
+        <h2 class="section-title">Программа курса</h2>
+        <div th:each="section : ${course.sections}" class="content-box mb-2">
+            <h3 th:text="${section.title}">Раздел</h3>
+            <ul class="lesson-list mt-1">
+                <li th:each="lesson : ${section.lessons}"
+                    th:classappend="${completedLessonIds != null and completedLessonIds.contains(lesson.id)} ? ' completed' : ''"
+                    class="lesson-item">
+                    <div class="lesson-info">
+                        <span class="badge badge-type" th:text="${lesson.type}">TEXT</span>
+                        <span th:text="${lesson.title}">Урок</span>
+                    </div>
+                    <a th:if="${enrolled}" th:href="@{/lessons/{id}(id=${lesson.id})}" class="btn btn-primary btn-sm">Открыть</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

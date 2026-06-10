@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content}, 'Проверка работ')}">
+<body>
+<div th:fragment="content">
+    <div class="container">
+        <h1 class="section-title">Работы на проверке</h1>
+        <div th:each="s : ${submissions}" class="content-box mb-2">
+            <div class="flex-between">
+                <div>
+                    <h3 th:text="${s.assignment.title}">Задание</h3>
+                    <p class="text-muted" th:text="'Студент: ' + ${s.user.fullName} + ' · ' + ${#temporals.format(s.submittedAt, 'dd.MM.yyyy HH:mm')}"></p>
+                </div>
+                <span class="badge badge-draft">Ожидает проверки</span>
+            </div>
+            <div class="mt-2" style="background:var(--bg);padding:1rem;border-radius:8px">
+                <p th:text="${s.answerText}">Ответ</p>
+            </div>
+            <form th:action="@{/teacher/submissions/{id}/grade(id=${s.id})}" method="post" class="mt-2 flex-between gap-2">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="number" name="score" class="form-control" style="max-width:120px" placeholder="Балл" required
+                       th:max="${s.assignment.maxScore}" min="0">
+                <input type="text" name="feedback" class="form-control" placeholder="Комментарий" style="flex:1">
+                <button type="submit" class="btn btn-success btn-sm">Оценить</button>
+            </form>
+        </div>
+        <div th:if="${submissions.empty}" class="alert alert-info">Нет работ на проверке.</div>
+    </div>
+</div>
+</body>
+</html>

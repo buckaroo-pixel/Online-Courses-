@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-users" author="courses">
+        <createTable tableName="users">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reset_token" type="VARCHAR(255)"/>
+            <column name="reset_token_expiry" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <createIndex tableName="users" indexName="idx_users_email">
+            <column name="email"/>
+        </createIndex>
+        <createIndex tableName="users" indexName="idx_users_reset_token">
+            <column name="reset_token"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="002-user-roles" author="courses">
+        <createTable tableName="user_roles">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="user_roles" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_user_roles_user" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="003-courses" author="courses">
+        <createTable tableName="courses">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="teacher_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="published" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="courses" baseColumnNames="teacher_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_courses_teacher"/>
+        <createIndex tableName="courses" indexName="idx_courses_teacher_id">
+            <column name="teacher_id"/>
+        </createIndex>
+        <createIndex tableName="courses" indexName="idx_courses_published">
+            <column name="published"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="004-sections" author="courses">
+        <createTable tableName="sections">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="course_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_index" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="sections" baseColumnNames="course_id"
+                                 referencedTableName="courses" referencedColumnNames="id"
+                                 constraintName="fk_sections_course" onDelete="CASCADE"/>
+        <createIndex tableName="sections" indexName="idx_sections_course_id">
+            <column name="course_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="005-lessons" author="courses">
+        <createTable tableName="lessons">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="section_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="TEXT"/>
+            <column name="type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="media_url" type="VARCHAR(500)"/>
+            <column name="order_index" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duration_minutes" type="INT"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="lessons" baseColumnNames="section_id"
+                                 referencedTableName="sections" referencedColumnNames="id"
+                                 constraintName="fk_lessons_section" onDelete="CASCADE"/>
+        <createIndex tableName="lessons" indexName="idx_lessons_section_id">
+            <column name="section_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="006-assignments" author="courses">
+        <createTable tableName="assignments">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="lesson_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_score" type="INT" defaultValueNumeric="100">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="assignments" baseColumnNames="lesson_id"
+                                 referencedTableName="lessons" referencedColumnNames="id"
+                                 constraintName="fk_assignments_lesson" onDelete="CASCADE"/>
+        <createIndex tableName="assignments" indexName="idx_assignments_lesson_id">
+            <column name="lesson_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-questions" author="courses">
+        <createTable tableName="questions">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="assignment_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="questions" baseColumnNames="assignment_id"
+                                 referencedTableName="assignments" referencedColumnNames="id"
+                                 constraintName="fk_questions_assignment" onDelete="CASCADE"/>
+        <createIndex tableName="questions" indexName="idx_questions_assignment_id">
+            <column name="assignment_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="008-answer-options" author="courses">
+        <createTable tableName="answer_options">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="question_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correct" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="answer_options" baseColumnNames="question_id"
+                                 referencedTableName="questions" referencedColumnNames="id"
+                                 constraintName="fk_answer_options_question" onDelete="CASCADE"/>
+        <createIndex tableName="answer_options" indexName="idx_answer_options_question_id">
+            <column name="question_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="009-enrollments" author="courses">
+        <createTable tableName="course_enrollments">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enrolled_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progress_percent" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_score" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="course_enrollments" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_enrollments_user"/>
+        <addForeignKeyConstraint baseTableName="course_enrollments" baseColumnNames="course_id"
+                                 referencedTableName="courses" referencedColumnNames="id"
+                                 constraintName="fk_enrollments_course"/>
+        <addUniqueConstraint tableName="course_enrollments" columnNames="user_id, course_id"
+                             constraintName="uk_enrollments_user_course"/>
+        <createIndex tableName="course_enrollments" indexName="idx_enrollments_user_course">
+            <column name="user_id"/>
+            <column name="course_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="010-lesson-progress" author="courses">
+        <createTable tableName="lesson_progress">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lesson_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed_at" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="lesson_progress" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_lesson_progress_user"/>
+        <addForeignKeyConstraint baseTableName="lesson_progress" baseColumnNames="lesson_id"
+                                 referencedTableName="lessons" referencedColumnNames="id"
+                                 constraintName="fk_lesson_progress_lesson"/>
+        <addUniqueConstraint tableName="lesson_progress" columnNames="user_id, lesson_id"
+                             constraintName="uk_lesson_progress_user_lesson"/>
+        <createIndex tableName="lesson_progress" indexName="idx_lesson_progress_user_lesson">
+            <column name="user_id"/>
+            <column name="lesson_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="011-submissions" author="courses">
+        <createTable tableName="submissions">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assignment_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="INT"/>
+            <column name="feedback" type="TEXT"/>
+            <column name="answer_text" type="TEXT"/>
+            <column name="submitted_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="submissions" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_submissions_user"/>
+        <addForeignKeyConstraint baseTableName="submissions" baseColumnNames="assignment_id"
+                                 referencedTableName="assignments" referencedColumnNames="id"
+                                 constraintName="fk_submissions_assignment"/>
+        <createIndex tableName="submissions" indexName="idx_submissions_user_assignment">
+            <column name="user_id"/>
+            <column name="assignment_id"/>
+        </createIndex>
+        <createIndex tableName="submissions" indexName="idx_submissions_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="012-submission-answers" author="courses">
+        <createTable tableName="submission_answers">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="submission_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="selected_option_id" type="BIGINT"/>
+            <column name="correct" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_by" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="submission_answers" baseColumnNames="submission_id"
+                                 referencedTableName="submissions" referencedColumnNames="id"
+                                 constraintName="fk_submission_answers_submission" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="submission_answers" baseColumnNames="question_id"
+                                 referencedTableName="questions" referencedColumnNames="id"
+                                 constraintName="fk_submission_answers_question"/>
+        <addForeignKeyConstraint baseTableName="submission_answers" baseColumnNames="selected_option_id"
+                                 referencedTableName="answer_options" referencedColumnNames="id"
+                                 constraintName="fk_submission_answers_option"/>
+        <createIndex tableName="submission_answers" indexName="idx_submission_answers_submission_id">
+            <column name="submission_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
